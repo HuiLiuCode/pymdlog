@@ -14,9 +14,9 @@ available. I found it useful and hope it is also helpful to you.
 
 ## Prerequisites
 
-* Python >= 2.6
+* [Python](http://www.python.org/) >= 2.6
 
-* matplotlib (optional, for plotting)
+* [matplotlib](http://matplotlib.org/) (optional, for plotting)
 
 ## Installation
 
@@ -41,11 +41,11 @@ can use the output file with your favorite plotting software:
 
 * "CSV" for R (use read.csv with header=FALSE), Excel
 
-The above-mentioned have been tested, but other program would be compatible too.
+The above-mentioned have been tested, but other programs would be compatible
+too.
 
 ## Contact
 
 If you have any problem about using the program, please feel free to contact me
 via email:
-
 teffliu@hotmail.com
