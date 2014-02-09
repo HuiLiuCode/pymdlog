@@ -27,13 +27,8 @@ prompt:
 
 ## Usage
 
-Make sure */PYTHONHOME/Scripts* is in the *PATH* environment variable.
-
-For Linux, run this command from the command prompt:
-
-    $ pymdlog.py
-
-Or in Windows,
+Make sure */PYTHONHOME/Scripts* is in the *PATH* environment variable. Then
+run this command from the command prompt:
 
     $ pymdlog
 
