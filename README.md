@@ -38,15 +38,15 @@ run this command from the command prompt:
 
 You will see a GUI which is fairly self-explanatory.
 
-Or if you want to use a command-line mode, do things like:
+Or if you want to use a command-line mode, do things like this:
 
-   $ pymdlog -i 1.out,2.out,3.out -t amber -x TIME -y Etot,EPtot -o result.dat
+    $ pymdlog -i 1.out,2.out,3.out -t amber -x TIME -y Etot,EPtot -o result.dat
 
-   $ pymdlog -i 1.log,2.log -t namd -x TS -y BOND,ANGLE -f result.png
+    $ pymdlog -i 1.log,2.log -t namd -x TS -y BOND,ANGLE -f result.png
 
 For more information about the arguments, run
 
-   $ pymdlog -h
+    $ pymdlog -h
 
 If you haven't installed matplotlib or don't like the generated figure, you
 can use the output file with your favorite plotting software:
