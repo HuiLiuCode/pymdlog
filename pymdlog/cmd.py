@@ -3,7 +3,7 @@ Command line module.
 """
 
 from __future__ import absolute_import, print_function
-from optparse import OptionParser
+from argparse import ArgumentParser
 import sys
 
 try:
@@ -30,6 +30,7 @@ else:
         ax.set_xlabel(xlb)
         plt.savefig(figname, dpi=300)
 
+from . import __program__ as NAME, __version__ as VER
 from .gui import run_gui
 from .analysis import LogAnalyzer
 from .datfile import DatFile
@@ -43,84 +44,63 @@ def main():
         run_gui()
         return
 
-    usage = 'Usage: pymdlog (GUI mode) or pymdlog [options] (Command-line mode)'
-    parser = OptionParser(usage=usage, add_help_option=False)
+    parser = ArgumentParser(prog=NAME.lower(), add_help=False,
+                            description='These arguments are used in the '
+                                        'command-line mode. If nothing is '
+                                        'given, the GUI mode will be used.')
 
-    parser.add_option('-h', '--help',
-                      action='help',
-                      help='Show this help message and exit.')
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    parser.add_option('-t', '--type',
-                      type='choice',
-                      dest='inptype',
-                      choices=['amber', 'namd'],
-                      default='amber',
-                      help='Specify the input MD log file type: '
-                           '"amber", "namd". [default: %default]')
+    group.add_argument('-h', '--help', action='help',
+                       help='Show this help message and exit.')
 
-    parser.add_option('-i', '--input',
-                      dest='inploc',
-                      help='Specify the input MD log file location(s). If more '
-                           'than one file is specified, separate them with '
-                           'comma.')
+    group.add_argument('-v', '--version', action='version',
+                       help="Show program's version and exit.",
+                       version='%s, Version %s'%(NAME, VER))
 
-    parser.add_option('-o', '--output',
-                      dest='outloc',
-                      default='output.dat',
-                      help='Specify the output result file location. The file '
-                           'type is extension-detected. [default: %default]')
+    group.add_argument('-i', '--input', dest='inploc', nargs='+',
+                       help='Specify the input MD log file location(s). '
+                            '[required]')
 
-    parser.add_option('-f', '--figure',
-                      dest='figloc',
-                      help='Specify the output figure location. The file type '
-                           'is extension-detected; ".png", ".eps", and ".pdf" '
-                           'are supported. NOTE: Need matplotlib.')
+    parser.add_argument('-t', '--type', dest='inptype',
+                        choices=['amber', 'namd'], default='amber',
+                        help='Specify the input MD log file type. '
+                             '[default: %(default)s]')
 
-    parser.add_option('-x', '--xaxis',
-                      dest='x',
-                      help='Specify the x-axis data set.')
+    parser.add_argument('-x', '--xaxis', dest='x',
+                        help='Specify the x-axis data set. '
+                             '[default: TIME for Amber, TS for NAMD]')
 
-    parser.add_option('-y', '--yaxis',
-                      dest='y',
-                      help='Specify the y-axis data set(s). If more than one '
-                           'data set is specified, separate them with comma.')
+    parser.add_argument('-y', '--yaxis', dest='y', nargs='+',
+                        help='Specify the y-axis data set(s). '
+                             '[default: all data sets found except X]')
 
-    parser.disable_interspersed_args()
-    opts, args = parser.parse_args()
-    if args:
-        raise ValueError("Unknown argument: " + args[0])
+    parser.add_argument('-o', '--output', dest='outloc', default='output.dat',
+                        help='Specify the output result file location. The '
+                             'file type is extension-detected. '
+                             '[default: %(default)s]')
+
+    parser.add_argument('-f', '--figure', dest='figloc',
+                        help='Specify the output figure location. The file '
+                             'type is extension-detected. png, eps and pdf '
+                             'are supported. [NOTE: need matplotlib]')
 
     # command-line mode
-    run_cmd(opts)
+    run_cmd(parser.parse_args())
 
 
-def run_cmd(opts):
+def run_cmd(args):
     """Command-line mode."""
-    # sanity check
-    # ------------
-    if not opts.inploc:
-        raise ValueError("Need input files.")
-    else:
-        inploc = opts.inploc.split(',')
+    if args.figloc and not HAS_PLOTLIB:
+        raise RuntimeError("Need matplotlib for plotting.")
 
-    outloc = figloc = None
-    if not opts.outloc and not opts.figloc:
-        raise ValueError("Need output file or figure.")
-    else:
-        if opts.outloc:
-            outloc = opts.outloc
-        if opts.figloc:
-            if not HAS_PLOTLIB:
-                raise RuntimeError("Need matplotlib for plotting.")
-            figloc = opts.figloc
-
-    x = {'amber': 'TIME', 'namd': 'TS'}[opts.inptype] if not opts.x else opts.x
-    y = opts.y.split(',') if opts.y else []
+    x = {'amber': 'TIME', 'namd': 'TS'}[args.inptype] if not args.x else args.x
+    y = args.y if args.y else []
 
     # parse log file
     # ------------
-    ana = LogAnalyzer(opts.inptype)
-    data = ana.analyze(*inploc)
+    ana = LogAnalyzer(args.inptype)
+    data = ana.analyze(*args.inploc)
     for i in y:
         if i not in data:
             raise ValueError("Data set '%s' not found." % i)
@@ -130,11 +110,10 @@ def run_cmd(opts):
     xdat = data[x]
     ydat = [data[i] for i in y] if y else [data[i] for i in data if i != x]
 
-    if outloc:
-        if outloc.lower().endswith('.csv'):
-            CsvFile(outloc, 'w').write(xdat, *ydat)
-        else:
-            DatFile(outloc, 'w').write(xdat, *ydat)
+    if args.outloc.lower().endswith('.csv'):
+        CsvFile(args.outloc, 'w').write(xdat, *ydat)
+    else:
+        DatFile(args.outloc, 'w').write(xdat, *ydat)
 
-    if HAS_PLOTLIB and figloc:
-        save_plots(xdat, ydat, x, y, figloc)
+    if args.figloc:
+        save_plots(xdat, ydat, x, y, args.figloc)
