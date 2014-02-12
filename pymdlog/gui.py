@@ -71,7 +71,7 @@ class PyMDLogGUI(object):
                       background='dark slate blue',
                       foreground='white',
                       font='Arial 9 bold')
-        title.pack(fill='both', expand=1, ipady=4, padx=4, pady=4)
+        title.pack(fill='both', expand=0, ipady=4, padx=4, pady=4)
 
         # main frame
         # ----------
@@ -81,7 +81,7 @@ class PyMDLogGUI(object):
         # IO
         # ==========
         ioframe = LabelFrame(page, text='I/O')
-        ioframe.pack(fill='both', expand=1)
+        ioframe.pack(fill='both', expand=0)
 
         Label(ioframe, text='Input type:').grid(row=0, column=0, sticky='w')
 
@@ -109,7 +109,10 @@ class PyMDLogGUI(object):
 
         inpent = Entry(ioframe, textvariable=self.inploc)
         inpent.bind('<Escape>', func=lambda x: self.inploc.set(''))
-        inpent.grid(row=1, column=1)
+        inpent.grid(row=1, column=1, sticky='we')
+
+        ioframe.grid_rowconfigure(1, weight=1)
+        ioframe.grid_columnconfigure(1, weight=1)
 
         Button(ioframe, command=self.on_browse_clicked,
                text='Browse').grid(row=1, column=2)
@@ -123,7 +126,10 @@ class PyMDLogGUI(object):
 
         outent = Entry(ioframe, textvariable=self.outloc)
         outent.bind('<Escape>', func=lambda x: self.outloc.set(''))
-        outent.grid(row=2, column=1)
+        outent.grid(row=2, column=1, sticky='we')
+
+        ioframe.grid_rowconfigure(2, weight=1)
+        ioframe.grid_columnconfigure(1, weight=1)
 
         Button(ioframe, command=self.on_saveas_clicked,
                text='SaveAs').grid(row=2, column=2)
@@ -135,6 +141,9 @@ class PyMDLogGUI(object):
 
         itemframe = LabelFrame(setframe, text='Items')
         itemframe.grid(row=0, column=0, sticky='nesw')
+
+        setframe.grid_rowconfigure(0, weight=1)
+        setframe.grid_columnconfigure(0, weight=1)
 
         self.itembox = Listbox(itemframe, state='disabled', height=20)
         self.itembox.pack(fill='both', expand=1)
@@ -155,22 +164,25 @@ class PyMDLogGUI(object):
         xyframe = Frame(setframe)
         xyframe.grid(row=0, column=2, sticky='nesw')
 
+        setframe.grid_rowconfigure(0, weight=1)
+        setframe.grid_columnconfigure(2, weight=1)
+
         xframe = LabelFrame(xyframe, text='X-axis')
-        xframe.pack(side='top', fill='x', expand=1)
+        xframe.pack(side='top', fill='both', expand=0)
 
         self.xbox = Listbox(xframe, state='disabled', height=1)
         self.xbox.pack(fill='both', expand=1)
 
         yframe = LabelFrame(xyframe, text='Y-axis')
-        yframe.pack(fill='x', expand=1)
+        yframe.pack(side='bottom', fill='both', expand=1)
 
         self.ybox = Listbox(yframe, state='disabled', height=16)
         self.ybox.pack(fill='both', expand=1)
 
-        Separator(self.parent, orient='horizontal').pack(fill='x', expand=1)
+        Separator(self.parent, orient='horizontal').pack(fill='x', expand=0)
 
         butframe = Frame(self.parent)
-        butframe.pack(fill='both', expand=1)
+        butframe.pack(fill='both', expand=0)
 
         outbut = Button(butframe, text='Output',
                         command=self.on_output_clicked, default='active')
