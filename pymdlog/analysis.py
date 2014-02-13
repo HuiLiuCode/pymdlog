@@ -4,6 +4,7 @@ Analysis of log files.
 
 from __future__ import absolute_import
 import collections
+import warnings
 
 from .amberlogfile import AmberLogFile
 from .namdlogfile import NamdLogFile
@@ -43,12 +44,15 @@ def analyze_amber_log(*filename):
     if nframe == 0:
         raise RuntimeError("No data found.")
 
+    to_del = []
     for k, v in data.items():
         if len(v) != nframe:
-            raise RuntimeWarning(
+            warnings.warn(
                     "Number of '%s' data frames is not equal to 'NSTEP'. "
                     "This item is meaningless and will be removed." % k)
-            del data[k]
+            to_del.append(k)
+    for k in to_del:
+        del data[k]
 
     if len(data) <= 1:
         raise RuntimeError("No data left.")
@@ -67,12 +71,15 @@ def analyze_namd_log(*filename):
     if nframe == 0:
         raise RuntimeError("No data found.")
 
+    to_del = []
     for k, v in data.items():
         if len(v) != nframe:
-            raise RuntimeWarning(
+            warnings.warn(
                     "Number of '%s' data frames is not equal to 'TS'. "
                     "This item is meaningless and will be removed." % k)
-            del data[k]
+            to_del.append(k)
+    for k in to_del:
+        del data[k]
 
     if len(data) <= 1:
         raise RuntimeError("No data left.")

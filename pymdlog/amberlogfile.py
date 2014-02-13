@@ -5,6 +5,7 @@ Module to parse AMBER output files.
 from __future__ import absolute_import
 import collections
 import re
+import warnings
 
 from .basefile import ReadOnlyTextFile
 
@@ -63,8 +64,8 @@ class AmberLogFile(ReadOnlyTextFile):
                 break
         else:
             # can't find the ending tag, which means a broken file
-            raise RuntimeWarning("Broken %s file: '%s'" % (
-                                 self.filetype, self.filename))
+            warnings.warn("Broken %s file: '%s'" % (
+                          self.filetype, self.filename))
 
         self.data = data
         return self.data
