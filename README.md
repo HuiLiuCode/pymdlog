@@ -24,8 +24,9 @@ to you.
 
 ### Installation
 
-Once you have satisfied the requirements, run this command from the command
-prompt:
+Once you have satisfied the requirements, you can extract the downloaded source
+file to a scratch directory. From the directory where `setup.py` is, run this
+command from the command prompt:
 
     $ python setup.py install
 
