@@ -10,6 +10,7 @@ __all__ = ['ReadOnlyTextFile', 'TextFile']
 
 class BaseFile(object):
     """Base class."""
+    fp = None
 
     def __init__(self, filename, mode='r'):
         self.mode = mode
@@ -30,7 +31,9 @@ class BaseFile(object):
 
     def close(self):
         """Close the file."""
-        self.fp.close()
+        if self.fp is not None:
+            self.fp.close()
+            self.fp = None
 
     def __enter__(self):
         """For context manager
