@@ -69,8 +69,7 @@ class PyMDLogGUI(object):
                       justify='center',
                       borderwidth=2,
                       background='dark slate blue',
-                      foreground='white',
-                      font='Arial 9 bold')
+                      foreground='white')
         title.pack(fill='both', expand=0, ipady=4, padx=4, pady=4)
 
         # main frame
