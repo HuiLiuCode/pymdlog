@@ -37,9 +37,9 @@ run this command:
 
     $ pymdlog
 
-You will see a GUI which is fairly self-explanatory.
+You will see a GUI which is fairly self-explanatory:
 
-![Screenshot](https://github.com/emdy/pymdlog/screenshot.jpg?raw=true "GUI")
+![Screenshot](https://github.com/emdy/pymdlog/blob/master/screenshot.jpg?raw=true "GUI")
 
 Or if you want to use the command-line mode, do things like this:
 
