@@ -39,6 +39,8 @@ run this command:
 
 You will see a GUI which is fairly self-explanatory.
 
+![Screenshot](https://github.com/emdy/pymdlog/screenshot.jpg?raw=true "GUI")
+
 Or if you want to use the command-line mode, do things like this:
 
     $ pymdlog -i 1.out 2.out -t amber -x TIME -y Etot "1-4 NB" -o result.dat
