@@ -8,10 +8,10 @@ dynamics (MD) simulation packages.
 I use MD packages, such as [Amber][] and [NAMD][], in my research work. Each of
 them generates log files (mdout in Amber's terminology) while computing.
 Properties of the simulation system are recorded in the files. There are
-existing scripts for parsing them, like process_mdout.perl for Amber and
-namdplot for NAMD. However, I'm not satisfied with them. So I wrote this tool
-and made it publicly available. I found it useful and hope it is also helpful
-to you.
+existing scripts for parsing them, like `process_mdout.perl` for [Amber][] and
+`namdplot` for [NAMD][]. However, I'm not satisfied with them. So I wrote this
+tool and made it publicly available. I found it useful and hope it is also
+helpful to you.
 
 [Amber]: http://ambermd.org/
 [NAMD]: http://www.ks.uiuc.edu/Research/namd/
@@ -39,7 +39,7 @@ run this command:
 
 You will see a GUI which is fairly self-explanatory:
 
-![Screenshot](https://github.com/emdy/pymdlog/blob/master/screenshot.jpg?raw=true "GUI")
+![Screenshot](https://github.com/emdy/pymdlog/blob/master/screenshot.png?raw=true "GUI")
 
 Or if you want to use the command-line mode, do things like this:
 
