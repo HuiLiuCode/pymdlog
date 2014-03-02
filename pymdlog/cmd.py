@@ -35,6 +35,7 @@ from .gui import run_gui
 from .analysis import LogAnalyzer
 from .datfile import DatFile
 from .csvfile import CsvFile
+from .stats import calc_stats, save_stats
 
 
 def main():
@@ -85,6 +86,10 @@ def main():
                              'type is extension-detected. png, eps and pdf '
                              'are supported. [NOTE: need matplotlib]')
 
+    parser.add_argument('--nostats', action='store_true',
+                        help='Do not output statistical results. '
+                             '[default: %(default)s]')
+
     # command-line mode
     run_cmd(parser.parse_args())
 
@@ -117,3 +122,9 @@ def run_cmd(args):
 
     if args.figloc:
         save_plots(xdat, ydat, x, y, args.figloc)
+
+    # generate stats file
+    # ------------
+    if not args.nostats:
+        values = calc_stats(y if y else [i for i in data if i != x], ydat)
+        save_stats(values)

@@ -2,7 +2,7 @@
 GUI module.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 import os
 try:
     # python 2.x
@@ -46,6 +46,7 @@ from . import __doc__ as DOC, __program__ as NAME, __version__ as VER
 from .analysis import LogAnalyzer
 from .datfile import DatFile
 from .csvfile import CsvFile
+from .stats import ITEMS, calc_stats, save_stats
 
 INPTYPES = {'Amber': ('Amber MDOUT File', '.mdout .out'),
             'NAMD': ('NAMD Log File', '.log')}
@@ -133,6 +134,9 @@ class PyMDLogGUI(object):
         Button(ioframe, command=self.on_saveas_clicked,
                text='SaveAs').grid(row=2, column=2)
 
+        Button(ioframe, command=self.on_stats_clicked,
+               text='Stats').grid(row=2, column=3)
+
         # settings
         # ==========
         setframe = Frame(page)
@@ -206,7 +210,7 @@ class PyMDLogGUI(object):
                       'Please specify input files.',
                       parent=self.parent)
         else:
-            dialog = SortFileDialog(main=self, parent=self.parent,
+            dialog = SortFileDialog(self, parent=self.parent,
                                     title='Sort Selected Files')
             if not dialog.ok_clicked:
                 return
@@ -235,10 +239,25 @@ class PyMDLogGUI(object):
 
     def on_saveas_clicked(self):
         ext = OUTTYPES[self.outtype.get()]
-        files = asksaveasfilename(defaultextension=ext[1],
+        file_ = asksaveasfilename(defaultextension=ext[1],
                                   filetypes=[ext, ('All Files', '.*')])
-        if files:
-            self.outloc.set(files)
+        if file_:
+            self.outloc.set(file_)
+
+    def on_stats_clicked(self):
+        if not self.ybox.size():
+            showerror('ERROR!', 'Please specify Y-axis.', parent=self.parent)
+        else:
+            ylbs = self.ybox.get(0, 'end')
+            ys = [self.data[i] for i in ylbs]
+            try:
+                values = calc_stats(ylbs, ys)
+                StatsTableDialog(values, parent=self.parent,
+                                 title='Statistical Results')
+            except Exception:
+                showerror('ERROR!',
+                          'Failed to show statistical results.',
+                          parent=self.parent)
 
     def change_box(self, from_, to, idx):
         item = from_.get(idx)
@@ -385,6 +404,8 @@ class SortFileDialog(Dialog):
         for c, t in kw:
             Button(butbox, command=c, text=t).grid()
 
+        self.resizable(height=False, width=False)
+
         return self.lbox
 
     def buttonbox(self):
@@ -396,6 +417,9 @@ class SortFileDialog(Dialog):
         cclbut = Button(box, text='Cancel', command=self.cancel)
         cclbut.pack(side='right', padx=4)
         okbut.pack(side='right', pady=4)
+
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.cancel)
 
     def apply(self):
         self.ok_clicked = True
@@ -441,6 +465,60 @@ class SortFileDialog(Dialog):
             return
         self.move_item(self.lbox, idx, 'down')
         self.changed = True
+
+
+class StatsTableDialog(Dialog):
+    """Show statistical table."""
+
+    def __init__(self, values, *args, **kwargs):
+        self.values = values
+        Dialog.__init__(self, *args, **kwargs)
+
+    def body(self, master):
+        self.tree = Treeview(master, columns=ITEMS, show='headings',
+                             height=len(self.values), selectmode='none')
+
+        self.tree.column(ITEMS[0], width=100, anchor='w')
+        self.tree.heading(ITEMS[0], text=ITEMS[0])
+        for c in ITEMS[1:-1]:
+            self.tree.column(c, width=100, anchor='w')
+            self.tree.heading(c, text=c)
+        self.tree.column(ITEMS[-1], width=200, anchor='center')
+        self.tree.heading(ITEMS[-1], text=ITEMS[-1])
+
+        for i, v in enumerate(self.values):
+            self.tree.insert('', 'end', values=v)
+
+        self.tree.pack(fill='both', expand=1)
+        self.resizable(height=False, width=False)
+
+        return self.tree
+
+    def buttonbox(self):
+        box = Frame(self)
+        box.pack(fill='both', expand=1)
+
+        save = Button(box, text='SaveAs', command=self.ok, default='active')
+        close = Button(box, text='Close', command=self.cancel)
+        close.pack(side='right', pady=4)
+        save.pack(side='right', pady=4)
+
+        self.bind('<Return>', self.ok)
+        self.bind('<Escape>', self.cancel)
+
+    def ok(self, event=None):
+        try:
+            self.apply()
+        finally:
+            self.withdraw()
+            self.update_idletasks()
+            self.cancel()
+
+    def apply(self):
+        fname = asksaveasfilename(initialfile='stats.log',
+                                  filetypes=[('All Files', '.*')])
+        if fname:
+            save_stats(self.values, fname)
 
 
 def run_gui():
