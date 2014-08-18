@@ -14,7 +14,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 __program__ = 'PyMDLog'
-__version__ = '1.0'
+__version__ = '1.0.1'
 __author__ = 'Hui Liu'
 __email__ = 'teffliu@hotmail.com'
 __desc__ = 'Analyzing Log Files of Molecular Dynamics Simulation Packages'

@@ -214,7 +214,14 @@ class PyMDLogGUI(object):
                                     title='Sort Selected Files')
             if not dialog.ok_clicked:
                 return
-            self.inplocs = self.parent.tk.splitlist(self.inploc.get())
+
+            # something has been changed in 2.7.7
+            inplocs = self.inploc.get()
+            if inplocs[0] == '(' and inplocs[-1] == ')':
+                self.inplocs = eval(inplocs)
+            else:
+                self.inplocs = self.parent.tk.splitlist(inplocs)
+
             ana = LogAnalyzer(self.inptype.get())
             try:
                 self.data = ana.analyze(*self.inplocs)
@@ -385,7 +392,11 @@ class SortFileDialog(Dialog):
         frame = Frame(master)
         frame.pack(side='left', fill='both', expand=1)
 
-        self.files = StringVar(value=self.main.inploc.get())
+        inplocs = self.main.inploc.get()
+        if inplocs[0] == '(' and inplocs[-1] == ')':
+            self.files = StringVar(value=' '.join(eval(inplocs)))
+        else:
+            self.files = StringVar(value=inplocs)
         self.lbox = Listbox(frame, listvariable=self.files, width=40)
 
         sbar = Scrollbar(frame, orient='vertical', command=self.lbox.yview)

@@ -18,7 +18,7 @@ helpful to you.
 
 ### Prerequisites
 
-* [Python](http://www.python.org/) 2.7, 3.2-3.3
+* [Python](http://www.python.org/) 2.7, 3.2-3.4
 
 * [matplotlib](http://matplotlib.org/) (optional, for plotting)
 

@@ -1,4 +1,2 @@
-@rem PyMDLog -- Main Program, Windows
-
 @echo off
-python -c "from pymdlog.cmd import main; main()" %*
+mshta vbscript:createobject("wscript.shell").run("pymdlogwin.bat",0)(window.close)&&exit
